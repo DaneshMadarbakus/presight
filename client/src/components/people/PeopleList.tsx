@@ -39,13 +39,19 @@ export function PeopleList() {
     router.replace(`?${params.toString()}`);
   }, [debouncedSearch, router, searchParams]);
 
-  const { data, isLoading, fetchNextPage, hasNextPage } =
+  const { data, isLoading, isError, error, fetchNextPage, hasNextPage } =
     usePeopleInfiniteQuery({
       search: debouncedSearch || undefined,
       hobbies: selectedHobbies.length > 0 ? selectedHobbies : undefined,
       nationality:
         selectedNationalities.length > 0 ? selectedNationalities : undefined,
     });
+
+  if (isError) {
+    return (
+      <div className="p-4 text-red-500">Error: {(error as Error).message}</div>
+    );
+  }
 
   const people = data?.pages.flatMap((page) => page.data) || [];
   const totalCount = data?.pages[0]?.pagination.total || 0;
