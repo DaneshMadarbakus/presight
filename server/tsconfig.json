@@ -5,12 +5,11 @@
     "paths": {
       "@shared/*": ["../shared/*"]
     },
-    "rootDir": "./src",
     "outDir": "./dist",
     "types": ["node"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true
   },
-  "include": ["src"]
+  "include": ["src", "../shared"]
 }
