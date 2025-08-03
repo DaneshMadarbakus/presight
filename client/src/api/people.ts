@@ -25,12 +25,13 @@ export async function getPeople(params: {
     });
 
     const response = await fetch(`${API_BASE}/api/people?${searchParams}`);
+    const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch people: ${response.statusText}`);
+    if (data.success === false) {
+      throw new Error(data.error.message);
     }
 
-    return await response.json();
+    return data.data;
   } catch (error) {
     console.error("getPeople error:", error);
     throw error;
@@ -40,12 +41,13 @@ export async function getPeople(params: {
 export async function getFilterOptions(): Promise<FilterOptionsResponse> {
   try {
     const response = await fetch(`${API_BASE}/api/people/filter-options`);
+    const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch filter options: ${response.statusText}`);
+    if (data.success === false) {
+      throw new Error(data.error.message);
     }
 
-    return await response.json();
+    return data.data;
   } catch (error) {
     console.error("getFilterOptions error:", error);
     throw error;
