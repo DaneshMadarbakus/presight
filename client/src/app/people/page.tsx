@@ -1,44 +1,60 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users } from "lucide-react"
+import { Suspense } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { getFilterOptions } from "@/api/people";
+import { FilterSidebar } from "@/components/people/FilterSidebar";
+import { MobileFilters } from "@/components/people/MobileFilters";
+import { PeopleList } from "@/components/people/PeopleList";
 
-export default function PeoplePage() {
+// Ensure page is rendered at request time to get latest filter options
+export const dynamic = "force-dynamic";
+
+export default async function PeoplePage() {
+  // SSR: Fetch filter options on nextjs server
+  const filterOptions = await getFilterOptions();
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="mb-8">
-            <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="text-3xl font-bold mb-4">Virtual Scrolling Demo</h1>
-            <p className="text-muted-foreground">
-              Coming soon: Paginated user list with infinite scroll, filtering, and search capabilities using @tanstack/react-virtual
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="container mx-auto px-4 py-4 lg:py-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold mb-1 lg:mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Virtual Scrolling Demo
+            </h1>
+            <p className="text-sm lg:text-base text-muted-foreground">
+              Paginated user list with infinite scroll, filtering, and search
             </p>
           </div>
-          
-          <Card className="text-left mb-8">
-            <CardHeader>
-              <CardTitle>Features</CardTitle>
-              <CardDescription>What this demo will showcase</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm">
-                <li>• Virtual scrolling with @tanstack/react-virtual</li>
-                <li>• Infinite scroll pagination</li>
-                <li>• Real-time search by name</li>
-                <li>• Filter by nationality and hobbies</li>
-                <li>• Responsive card layout</li>
-              </ul>
-            </CardContent>
-          </Card>
-          
-          <Button asChild>
-            <Link href="/">← Back to Home</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <MobileFilters filterOptions={filterOptions} />
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/">← Back</Link>
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex gap-4 lg:gap-6">
+          <div className="hidden lg:block">
+            <Suspense
+              fallback={
+                <div className="w-64 h-96 bg-muted animate-pulse rounded-lg" />
+              }
+            >
+              <FilterSidebar filterOptions={filterOptions} />
+            </Suspense>
+          </div>
+
+          <div className="flex-1">
+            <Suspense
+              fallback={
+                <div className="h-32 bg-muted animate-pulse rounded-lg" />
+              }
+            >
+              <PeopleList />
+            </Suspense>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
