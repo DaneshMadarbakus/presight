@@ -17,7 +17,7 @@ export function PersonCard({ person }: PersonCardProps) {
         <div className="flex-shrink-0">
           <Image
             src={person.avatar}
-            alt={`${person.first_name} ${person.last_name}`}
+            alt={`${person.first_name || "Unknown"} ${person.last_name || ""}`}
             width={48}
             height={48}
             className="rounded-full sm:w-14 sm:h-14 lg:w-16 lg:h-16"
