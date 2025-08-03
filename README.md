@@ -37,6 +37,7 @@
 
 ## Future Improvement
 
+- Implement centralized error monitoring with Sentry to automatically capture frontend and backend exceptions without requiring manual logging in each API call.
 - To keep the scope tight, filter options are static. However, in a production app I’d consider dynamically updating and narrowing filters based on active selections to improve UX.
 - I would pull all of the strings into a constants file on the front end.
 - I interpreted the test saying "Display the list as individual cards using virtual scroll component..." as meaning that the list should render one card per row and utilise virtual scroll. In the future I would consider implementing multiple cards per row for better UI/UX.
