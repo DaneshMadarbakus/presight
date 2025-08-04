@@ -37,7 +37,7 @@ export default function PeopleError({ error, reset }: ErrorProps) {
             Something went wrong
           </h2>
           <p className="text-gray-600 mb-6">
-            We encountered an error while loading the people data. This could be due to a network issue or server problem.
+            {error.message || "We encountered an error while loading the people data. This could be due to a network issue or server problem."}
           </p>
         </div>
         

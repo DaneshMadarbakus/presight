@@ -27,6 +27,9 @@ export async function getPeople(params: {
     const response = await fetch(`${API_BASE}/api/people?${searchParams}`);
     
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error("Rate limit exceeded. Please try again later.");
+      }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
@@ -48,6 +51,9 @@ export async function getFilterOptions(): Promise<FilterOptionsResponse> {
     const response = await fetch(`${API_BASE}/api/people/filter-options`);
     
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error("Rate limit exceeded. Please try again later.");
+      }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
