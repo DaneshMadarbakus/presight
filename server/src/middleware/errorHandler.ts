@@ -18,7 +18,14 @@ export function errorHandler(
   }
 
   const fallbackError = AppErrors.internal();
-  console.error("Unhandled error:", err);
+
+  // prevent logging sensitive error details in prod
+  if (process.env.NODE_ENV === "development") {
+    console.error("Unhandled error:", err);
+  } else {
+    console.error("Unhandled error occurred");
+  }
+
   return res.status(fallbackError.error.status).json(fallbackError);
 }
 

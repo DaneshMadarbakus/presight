@@ -22,6 +22,8 @@ export async function streamText(req: Request, res: Response) {
     streamTextToResponse(text, res, STREAMING_CONFIG.CHAR_DELAY_MS);
   } catch (err) {
     console.error("Error setting up streaming response:", err);
-    res.status(500).send("Error occurred while streaming");
+    if (!res.headersSent) {
+      res.status(500).send("Error occurred while streaming");
+    }
   }
 }

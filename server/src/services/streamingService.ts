@@ -6,21 +6,45 @@ export function streamTextToResponse(
   delayMs: number
 ) {
   let index = 0;
+  let timeoutId: NodeJS.Timeout | null = null;
+  let isCleanedUp = false;
+
+  const cleanup = () => {
+    if (isCleanedUp) return;
+    isCleanedUp = true;
+
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
+
+  res.on("close", cleanup);
+  res.on("error", cleanup);
+  res.on("finish", cleanup);
 
   const streamNextChar = () => {
     try {
-      if (index >= text.length) {
-        res.end();
+      if (isCleanedUp || res.destroyed || index >= text.length) {
+        cleanup();
+        if (!res.destroyed && !res.headersSent) {
+          res.end();
+        }
         return;
       }
 
-      res.write(text[index]);
-      index++;
+      if (!res.destroyed) {
+        res.write(text[index]);
+        index++;
+      }
 
-      setTimeout(streamNextChar, delayMs);
+      timeoutId = setTimeout(streamNextChar, delayMs);
     } catch (err) {
       console.error("Error during streaming:", err);
-      res.destroy(err as Error);
+      cleanup();
+      if (!res.destroyed) {
+        res.destroy(err as Error);
+      }
     }
   };
 
