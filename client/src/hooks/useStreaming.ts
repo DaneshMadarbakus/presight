@@ -22,9 +22,11 @@ export function useStreaming() {
     null
   );
   const decoderRef = useRef(new TextDecoder());
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
     return () => {
+      isMountedRef.current = false;
       if (readerRef.current) {
         readerRef.current
           .cancel()
@@ -55,29 +57,47 @@ export function useStreaming() {
         const { done, value } = await reader.read();
 
         if (done) {
-          setState((prev) => ({
-            ...prev,
-            isStreaming: false,
-            isComplete: true,
-            fullText: accumulatedText,
-          }));
+          if (isMountedRef.current) {
+            setState((prev) => ({
+              ...prev,
+              isStreaming: false,
+              isComplete: true,
+              fullText: accumulatedText,
+            }));
+          }
           break;
         }
 
-        const chunk = decoderRef.current.decode(value, { stream: true });
-        accumulatedText += chunk;
+        try {
+          const chunk = decoderRef.current.decode(value, { stream: true });
+          accumulatedText += chunk;
+        } catch (decodeError) {
+          console.error("TextDecoder error:", decodeError);
+          if (isMountedRef.current) {
+            setState((prev) => ({
+              ...prev,
+              isStreaming: false,
+              error: "Failed to decode stream data",
+            }));
+          }
+          break;
+        }
 
-        setState((prev) => ({
-          ...prev,
-          displayText: accumulatedText,
-        }));
+        if (isMountedRef.current) {
+          setState((prev) => ({
+            ...prev,
+            displayText: accumulatedText,
+          }));
+        }
       }
     } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        isStreaming: false,
-        error: error instanceof Error ? error.message : "Streaming failed",
-      }));
+      if (isMountedRef.current) {
+        setState((prev) => ({
+          ...prev,
+          isStreaming: false,
+          error: error instanceof Error ? error.message : "Streaming failed",
+        }));
+      }
     }
   }, []);
 
@@ -91,22 +111,26 @@ export function useStreaming() {
       }
     }
 
-    setState((prev) => ({
-      ...prev,
-      isStreaming: false,
-    }));
+    if (isMountedRef.current) {
+      setState((prev) => ({
+        ...prev,
+        isStreaming: false,
+      }));
+    }
   }, []);
 
-  const resetStreaming = useCallback(() => {
-    stopStreaming();
-    setState({
-      displayText: "",
-      fullText: "",
-      isStreaming: false,
-      isComplete: false,
-      error: null,
-    });
-  }, []);
+  const resetStreaming = useCallback(async () => {
+    await stopStreaming();
+    if (isMountedRef.current) {
+      setState({
+        displayText: "",
+        fullText: "",
+        isStreaming: false,
+        isComplete: false,
+        error: null,
+      });
+    }
+  }, [stopStreaming]);
 
   return {
     ...state,

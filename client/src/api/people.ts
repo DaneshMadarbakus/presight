@@ -4,7 +4,7 @@ import {
   FilterOptionsResponse,
 } from "@shared/types/person";
 
-const API_BASE = "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
 
 export async function getPeople(params: {
   page?: number;
@@ -25,6 +25,11 @@ export async function getPeople(params: {
     });
 
     const response = await fetch(`${API_BASE}/api/people?${searchParams}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
     const data = await response.json();
 
     if (data.success === false) {
@@ -41,6 +46,11 @@ export async function getPeople(params: {
 export async function getFilterOptions(): Promise<FilterOptionsResponse> {
   try {
     const response = await fetch(`${API_BASE}/api/people/filter-options`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
     const data = await response.json();
 
     if (data.success === false) {
