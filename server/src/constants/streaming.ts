@@ -1,0 +1,7 @@
+export const STREAMING_CONFIG = {
+  CHAR_DELAY_MS: 50,
+
+  PARAGRAPH_COUNT: 32,
+
+  PARAGRAPH_SEPARATOR: "\n\n",
+} as const;
