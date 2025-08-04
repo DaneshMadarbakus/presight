@@ -115,3 +115,4 @@ presight/
   - Integration tests for API endpoints and WebSocket connection flows
   - End-to-end tests (Playwright/Cypress) for complete user workflows
   - Load tests for WebSocket performance and queue processing under concurrent usage
+- Production Deployment - Set up production infrastructure including Docker containerization, CI/CD pipelines, cloud deployment (Vercel for frontend, Railway for backend), database integration to replace in-memory storage, and monitoring systems
