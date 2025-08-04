@@ -22,9 +22,11 @@ export function useStreaming() {
     null
   );
   const decoderRef = useRef(new TextDecoder());
-  const isMountedRef = useRef(true);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
+    isMountedRef.current = true;
+
     return () => {
       isMountedRef.current = false;
       if (readerRef.current) {
