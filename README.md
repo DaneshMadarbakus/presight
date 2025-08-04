@@ -72,3 +72,9 @@
 - I interpreted the test saying "Display the list as individual cards using virtual scroll component..." as meaning that the list should render one card per row and utilise virtual scroll. In the future I would consider implementing multiple cards per row for better UI/UX.
 - Stream improvement - Auto-scroll behavior - Smart scrolling to follow the streaming cursor
 - Worker Pool - Replace per-request worker creation with reusable worker pool for better performance and resource management
+- Testing Implementation - Currently lacks comprehensive test coverage. Future versions should implement:
+  - Unit tests (Jest/Vitest) for queue service, worker service, WebSocket handlers, and React hooks
+  - Component tests (React Testing Library) for user interactions and component behavior
+  - Integration tests for API endpoints and WebSocket connection flows
+  - End-to-end tests (Playwright/Cypress) for complete user workflows
+  - Load tests for WebSocket performance and queue processing under concurrent usage
