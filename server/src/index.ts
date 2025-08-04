@@ -15,17 +15,7 @@ const app = express();
 const PORT = 4000;
 const server = createServer(app);
 
-// security middleware
-app.use(helmet());
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
-});
-app.use(limiter);
-
-// CORS configuration
+// CORS configuration - must come first so 429 errors have CORS headers
 app.use(
   cors({
     origin:
@@ -35,6 +25,16 @@ app.use(
     credentials: true,
   })
 );
+
+// security middleware
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+});
+app.use(limiter);
 
 // size limit on body parsing
 app.use(express.json({ limit: "10mb" }));
@@ -54,7 +54,12 @@ server.listen(PORT, () => {
   console.log(`WebSocket server ready on ws://localhost:${PORT}`);
 });
 
+let isShuttingDown = false;
+
 const gracefulShutdown = async (signal: string) => {
+  if (isShuttingDown) return; // Prevent multiple shutdown attempts
+  isShuttingDown = true;
+  
   console.log(`${signal} received, shutting down gracefully`);
 
   try {
@@ -66,14 +71,19 @@ const gracefulShutdown = async (signal: string) => {
       console.log("Server closed");
       process.exit(0);
     });
+
+    // Timeout to force exit if server doesn't close
+    setTimeout(() => {
+      console.log("Force closing server");
+      process.exit(1);
+    }, 5000);
   } catch (error) {
     console.error("Error during shutdown:", error);
     process.exit(1);
   }
 };
 
-["SIGINT", "SIGTERM"].forEach((signal) => {
-  process.on(signal, () => gracefulShutdown(signal));
-});
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
 export default app;

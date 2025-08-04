@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useWebSocket } from "./useWebSocket";
 import { makeQueueRequest } from "../api/queue";
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000';
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:4000";
 
 interface QueueItem {
   id: string;
@@ -29,12 +29,13 @@ export function useQueue() {
   // Cleanup old items every 5 minutes
   useEffect(() => {
     const cleanup = setInterval(() => {
-      setItems(currentItems => {
+      setItems((currentItems) => {
         const cutoff = Date.now() - 5 * 60 * 1000; // 5 minutes ago
-        return currentItems.filter(item => 
-          item.status === 'pending' || 
-          item.status === 'processing' || 
-          item.createdAt > cutoff
+        return currentItems.filter(
+          (item) =>
+            item.status === "pending" ||
+            item.status === "processing" ||
+            item.createdAt > cutoff
         );
       });
     }, 5 * 60 * 1000); // Run every 5 minutes
@@ -88,27 +89,32 @@ export function useQueue() {
         const requestId = await makeQueueRequest();
         return { index, requestId, error: null };
       } catch (err) {
-        return { 
-          index, 
-          requestId: `error-${index}`, 
-          error: err instanceof Error ? err.message : "Unknown error" 
+        return {
+          index,
+          requestId: `error-${index}`,
+          error: err instanceof Error ? err.message : "Unknown error",
         };
       }
     });
 
     // Wait for all requests to complete and update items in one go
     const results = await Promise.allSettled(requests);
-    
-    setItems(prevItems => 
+
+    setItems((prevItems) =>
       prevItems.map((item, index) => {
         const result = results[index];
-        if (result.status === 'fulfilled') {
+        if (result.status === "fulfilled") {
           const { requestId, error } = result.value;
-          return error 
-            ? { ...item, id: requestId, status: 'error' as const, error }
+          return error
+            ? { ...item, id: requestId, status: "error" as const, error }
             : { ...item, id: requestId };
         }
-        return { ...item, id: `error-${index}`, status: 'error' as const, error: 'Request failed' };
+        return {
+          ...item,
+          id: `error-${index}`,
+          status: "error" as const,
+          error: "Request failed",
+        };
       })
     );
   }, [isInitialized]);
@@ -122,7 +128,7 @@ export function useQueue() {
     if (isConnected && !isInitialized) {
       startQueue();
     }
-  }, [isConnected, isInitialized, startQueue]);
+  }, [isConnected, isInitialized]);
 
   return {
     items,
