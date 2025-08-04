@@ -95,13 +95,13 @@ presight/
     - Built useWebSocket hook with reconnection logic and memory leak prevention
     - Created useQueue hook that manages 20 simultaneous requests with WebSocket updates
     - Implemented modular UI components (QueueStats, QueueItem) for clean code organization
-    - Added real-time status updates: pending → processing → completed/error
+    - Implemented three-state flow (pending → processing → completed/error) beyond the basic pending/result requirement, providing real-time visibility into worker processing
     - Built responsive queue display with connection status and reset functionality
     - Added proper TypeScript interfaces and error boundary handling
 
 ## Future Improvements
 
-- Error handling: A minimal structured error system is in place for backend responses (VALIDATION_ERROR, NOT_FOUND, etc.). For the sake of test scope, more advanced error types (UNAUTHORIZED, FORBIDDEN, RATE_LIMIT, etc.) were omitted. Future versions should extend this and introduce a consistent client-side handler.
+- Error handling: A structured error system is in place with typed error codes (VALIDATION_ERROR, NOT_FOUND, INTERNAL_SERVER_ERROR) and rate limiting. Future versions could extend this with authentication errors (UNAUTHORIZED, FORBIDDEN) and introduce a centralized client-side error handler.
 - For the sake of the test controller functions use async/await to reflect real-world patterns where service functions are typically asynchronous (e.g. database calls). While current services are synchronous, this ensures compatibility with error-handling middleware and can be adapted later without structural changes.
 - Implement a fetch wrapper for client and server fetches to centralize and standardise fetching and error handling
 - To keep the scope tight, filter options are static. However, in a production app I’d consider dynamically updating and narrowing filters based on active selections to improve UX.
