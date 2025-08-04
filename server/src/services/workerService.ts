@@ -30,7 +30,8 @@ async function processRequestInWorker(
   });
 
   // Workers can't execute TypeScript directly, so we use the compiled JS file
-  const workerScript = path.resolve(__dirname, "../workers/queueWorker.js");
+  // In development with ts-node, __dirname points to src/, but we need the compiled dist/ version
+  const workerScript = path.resolve(process.cwd(), "dist/server/src/workers/queueWorker.js");
   
   // Verify worker script exists
   if (!require('fs').existsSync(workerScript)) {

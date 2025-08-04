@@ -15,7 +15,7 @@ export default function Home() {
     {
       title: "Virtual Scrolling",
       description:
-        "Paginated user list with infinite scroll, filtering, and search capabilities using @tanstack/react-virtual",
+        "Paginated user list with infinite scroll, filtering, and search capabilities",
       icon: Users,
       href: "/people",
       badge: "React Virtual",

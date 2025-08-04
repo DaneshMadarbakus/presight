@@ -47,8 +47,22 @@
     - Added character count tracking and streaming status indicators
     - Used modular component architecture with `StreamingDisplay` and `StreamingControls`
 - Implement Feature 3: WebWorker/WebSocket
+  - **Backend:**
+    - Built in-memory queue service with functional approach (no classes per user preference)
+    - Created worker service that processes requests in Node.js worker threads with 2-second delays
+    - Implemented WebSocket service for real-time communication between server and clients
+    - Added queue controller with endpoints for adding requests and checking status
+    - Created JavaScript worker file for compatibility (workers can't execute TypeScript directly)
+    - Added comprehensive error handling and graceful shutdown procedures
+  - **Frontend:**
+    - Built useWebSocket hook with reconnection logic and memory leak prevention
+    - Created useQueue hook that manages 20 simultaneous requests with WebSocket updates
+    - Implemented modular UI components (QueueStats, QueueItem) for clean code organization
+    - Added real-time status updates: pending → processing → completed/error
+    - Built responsive queue display with connection status and reset functionality
+    - Added proper TypeScript interfaces and error boundary handling
 
-## Future Improvement
+## Future Improvements
 
 - Error handling: A minimal structured error system is in place for backend responses (VALIDATION_ERROR, NOT_FOUND, etc.). For the sake of test scope, more advanced error types (UNAUTHORIZED, FORBIDDEN, RATE_LIMIT, etc.) were omitted. Future versions should extend this and introduce a consistent client-side handler.
 - For the sake of the test controller functions use async/await to reflect real-world patterns where service functions are typically asynchronous (e.g. database calls). While current services are synchronous, this ensures compatibility with error-handling middleware and can be adapted later without structural changes.
@@ -57,3 +71,4 @@
 - I would pull all of the strings into a constants file on the front end.
 - I interpreted the test saying "Display the list as individual cards using virtual scroll component..." as meaning that the list should render one card per row and utilise virtual scroll. In the future I would consider implementing multiple cards per row for better UI/UX.
 - Stream improvement - Auto-scroll behavior - Smart scrolling to follow the streaming cursor
+- Worker Pool - Replace per-request worker creation with reusable worker pool for better performance and resource management
