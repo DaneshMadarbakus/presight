@@ -16,6 +16,28 @@ interface WorkerResponse {
 
 // Process incoming messages from main thread
 parentPort?.on("message", async (message: WorkerMessage) => {
+  // Validate message structure
+  if (!message || typeof message !== 'object') {
+    const response: WorkerResponse = {
+      type: "REQUEST_ERROR",
+      requestId: "unknown",
+      error: "Invalid message format",
+    };
+    parentPort?.postMessage(response);
+    return;
+  }
+
+  // Validate required fields
+  if (message.type !== "PROCESS_REQUEST" || !message.requestId || typeof message.requestId !== 'string') {
+    const response: WorkerResponse = {
+      type: "REQUEST_ERROR",
+      requestId: message.requestId || "unknown",
+      error: "Invalid message type or missing requestId",
+    };
+    parentPort?.postMessage(response);
+    return;
+  }
+
   if (message.type === "PROCESS_REQUEST") {
     try {
       // Simulate processing with 2-second delay

@@ -58,14 +58,17 @@ export function useWebSocket({
 
       wsRef.current = null;
     }
-  }, []);
+
+    // Clear message queue to prevent memory leak
+    messageQueue.length = 0;
+  }, [messageQueue]);
 
   const connect = useCallback(() => {
     if (!isMountedRef.current) return;
 
     // Validate WebSocket URL
-    if (!url.startsWith('ws://') && !url.startsWith('wss://')) {
-      setError('Invalid WebSocket URL format');
+    if (!url.startsWith("ws://") && !url.startsWith("wss://")) {
+      setError("Invalid WebSocket URL format");
       return;
     }
 
@@ -88,7 +91,7 @@ export function useWebSocket({
         setIsConnected(true);
         setError(null);
         reconnectCountRef.current = 0;
-        
+
         // Send queued messages
         while (messageQueue.length > 0) {
           const queuedMessage = messageQueue.shift();
@@ -96,7 +99,7 @@ export function useWebSocket({
             ws.send(JSON.stringify(queuedMessage));
           }
         }
-        
+
         onConnect?.();
       };
 
@@ -115,7 +118,8 @@ export function useWebSocket({
           );
 
           // Exponential backoff: base interval * 2^attempt
-          const backoffDelay = reconnectInterval * Math.pow(2, reconnectCountRef.current - 1);
+          const backoffDelay =
+            reconnectInterval * Math.pow(2, reconnectCountRef.current - 1);
           const maxDelay = 30000; // Cap at 30 seconds
           const delay = Math.min(backoffDelay, maxDelay);
 
@@ -125,9 +129,11 @@ export function useWebSocket({
             }
           }, delay);
         } else {
-          setError(reconnectCountRef.current >= reconnectAttempts 
-            ? "Failed to reconnect after maximum attempts" 
-            : "WebSocket connection closed");
+          setError(
+            reconnectCountRef.current >= reconnectAttempts
+              ? "Failed to reconnect after maximum attempts"
+              : "WebSocket connection closed"
+          );
         }
       };
 
@@ -161,21 +167,25 @@ export function useWebSocket({
     reconnectAttempts,
     reconnectInterval,
     cleanup,
+    messageQueue,
   ]);
 
-  const sendMessage = useCallback((message: WebSocketMessage) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      try {
-        wsRef.current.send(JSON.stringify(message));
-      } catch (err) {
-        console.error("WebSocket send error:", err);
-        setError("Failed to send message");
+  const sendMessage = useCallback(
+    (message: WebSocketMessage) => {
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        try {
+          wsRef.current.send(JSON.stringify(message));
+        } catch (err) {
+          console.error("WebSocket send error:", err);
+          setError("Failed to send message");
+        }
+      } else {
+        // Queue message for when connection is restored
+        messageQueue.push(message);
       }
-    } else {
-      // Queue message for when connection is restored
-      messageQueue.push(message);
-    }
-  }, [messageQueue]);
+    },
+    [messageQueue]
+  );
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -185,7 +195,8 @@ export function useWebSocket({
       isMountedRef.current = false;
       cleanup();
     };
-  }, [url]); // Only reconnect when URL changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url]);
 
   return {
     isConnected,

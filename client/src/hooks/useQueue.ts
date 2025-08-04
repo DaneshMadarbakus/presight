@@ -128,7 +128,7 @@ export function useQueue() {
     if (isConnected && !isInitialized) {
       startQueue();
     }
-  }, [isConnected, isInitialized]);
+  }, [isConnected, isInitialized, startQueue]);
 
   return {
     items,

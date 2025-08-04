@@ -20,8 +20,8 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? ["http://localhost:3000"] // replace with prod domains
-        : true, // Allow origins in dev
+        ? process.env.ALLOWED_ORIGINS?.split(',') || false // Configure via env var
+        : true, // Allow all origins in dev
     credentials: true,
   })
 );

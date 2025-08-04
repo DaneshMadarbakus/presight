@@ -13,6 +13,10 @@ export function streamTextToResponse(
     if (isCleanedUp) return;
     isCleanedUp = true;
 
+    // Remove event listeners to prevent multiple cleanup calls
+    res.removeAllListeners("close");
+    res.removeAllListeners("error");
+
     if (timeoutId) {
       clearTimeout(timeoutId);
       timeoutId = null;
@@ -21,15 +25,14 @@ export function streamTextToResponse(
 
   res.on("close", cleanup);
   res.on("error", cleanup);
-  res.on("finish", cleanup);
 
   const streamNextChar = () => {
     try {
       if (isCleanedUp || res.destroyed || index >= text.length) {
-        cleanup();
-        if (!res.destroyed && !res.headersSent) {
+        if (!res.destroyed) {
           res.end();
         }
+        cleanup();
         return;
       }
 

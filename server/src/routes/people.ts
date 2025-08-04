@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getPeople, getFilterOptions } from "../controllers/peopleController";
-import { asyncHandler } from "src/middleware/errorHandler";
+import { asyncHandler } from "../middleware/errorHandler";
 
 const router = Router();
 
