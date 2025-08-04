@@ -4,7 +4,7 @@ import {
   FilterOptionsResponse,
 } from "@shared/types/person";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = "http://localhost:4000";
 
 export async function getPeople(params: {
   page?: number;

@@ -1,44 +1,58 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Zap } from "lucide-react"
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useStreaming } from "@/hooks/useStreaming";
+import { StreamingDisplay } from "@/components/streaming/StreamingDisplay";
+import { StreamingControls } from "@/components/streaming/StreamingControls";
 
 export default function StreamingPage() {
+  const {
+    displayText,
+    fullText,
+    isStreaming,
+    isComplete,
+    error,
+    startStreaming,
+    stopStreaming,
+    resetStreaming,
+  } = useStreaming();
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="mb-8">
-            <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Zap className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="text-3xl font-bold mb-4">HTTP Streaming Demo</h1>
-            <p className="text-muted-foreground">
-              Coming soon: Character-by-character text streaming demonstration with real-time display updates
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <div className="container mx-auto px-4 py-4 lg:py-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold mb-1 lg:mb-2 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+              HTTP Streaming Demo
+            </h1>
+            <p className="text-sm lg:text-base text-muted-foreground">
+              Character-by-character text streaming with real-time display
             </p>
           </div>
-          
-          <Card className="text-left mb-8">
-            <CardHeader>
-              <CardTitle>Features</CardTitle>
-              <CardDescription>What this demo will showcase</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm">
-                <li>• HTTP streaming endpoint with long text content</li>
-                <li>• Character-by-character real-time display</li>
-                <li>• Stream processing with incremental updates</li>
-                <li>• Complete text display when stream closes</li>
-                <li>• Response time visualization</li>
-              </ul>
-            </CardContent>
-          </Card>
-          
-          <Button asChild>
-            <Link href="/">← Back to Home</Link>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/">← Back</Link>
           </Button>
         </div>
+
+        <div className="mb-6">
+          <StreamingControls
+            isStreaming={isStreaming}
+            isComplete={isComplete}
+            onStart={startStreaming}
+            onStop={stopStreaming}
+            onReset={resetStreaming}
+          />
+        </div>
+
+        <StreamingDisplay
+          displayText={displayText}
+          fullText={fullText}
+          isStreaming={isStreaming}
+          isComplete={isComplete}
+          error={error}
+        />
       </div>
     </div>
-  )
+  );
 }
