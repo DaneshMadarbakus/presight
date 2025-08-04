@@ -1,15 +1,52 @@
-# Presight Frontend Exercise
+# Presight Tech Exercise
 
-## Setup
+## Overview
 
-- Monorepo with client/server/shared structure
-- Next.js + Express + TypeScript + Tailwind + shadcn
+A full-stack TypeScript application demonstrating advanced web technologies including virtual scrolling, HTTP streaming, WebWorkers, and WebSockets.
 
-## Features to Build
+## Getting Started
 
-1. Virtual scrolling user list with infinite scroll
-2. Character-by-character HTTP streaming
-3. WebWorker + WebSocket queue system
+### Prerequisites
+- Node.js 18+
+- npm
+
+### Quick Start
+```bash
+# One command to install, build, and start everything
+npm run demo
+```
+
+This will:
+1. Install all dependencies
+2. Build the server TypeScript
+3. Start both frontend and backend
+
+Access the application at:
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:4000
+- **WebSocket**: ws://localhost:4000
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend**: Express.js, Node.js, TypeScript, WebSockets
+- **Architecture**: Monorepo with client/server/shared structure
+
+## Project Structure
+
+```
+presight/
+├── client/          # Next.js frontend
+├── server/          # Express.js backend  
+├── shared/          # Shared TypeScript types
+└── package.json     # Workspace configuration
+```
+
+## Features
+
+1. **Virtual Scrolling People List** - Infinite scroll with filtering and search
+2. **HTTP Streaming** - Character-by-character text streaming with real-time display
+3. **Queue Processing System** - WebWorker + WebSocket real-time queue management
 
 ## Development Steps
 
